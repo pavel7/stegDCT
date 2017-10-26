@@ -6,7 +6,11 @@ import mathOperations.VideoDCT;
 import mathOperations.VideoInvertDCT;
 import string.StringUtils;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -510,8 +514,30 @@ public class DCTMethodVideo {
 
     }
 
-    public byte[] decodeByteCodeFromImage(int numberOfImages, String inputImage, String newFormat) throws ExecutionException, InterruptedException {
-        ImageBMP imageDecode = new ImageBMP(inputImage + numberOfImages + newFormat);
+    public byte[] decodeByteCodeFromImage(int numberOfImages, String inputListOfimages) throws ExecutionException, InterruptedException {
+        File folder = new File(inputListOfimages);
+        File[] listOfFiles = folder.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return !name.equals(".DS_Store");
+            }
+        });
+
+        int indexVal = 0;
+        if ((listOfFiles != null) && (listOfFiles.length != 0)) {
+            for (File file : listOfFiles) {
+                if (file.isFile()) {
+                    indexVal++;
+                    int indexOfFile = StringUtils.getImageIndex(file.getName());
+                    String convertedNameOfFileNumber = String.valueOf(indexOfFile);
+                    imageMap.put(convertedNameOfFileNumber, file);
+                }
+            }
+        } else {
+            System.out.println("Empty folder");
+            return null;
+        }
+        ImageBMP imageDecode = new ImageBMP(getImage( numberOfImages));
         ArrayList<short[][][]> listOfBlueSegment = getListOfBlueSegmentsAccordingSegmentSize(numberOfImages, imageDecode.getNumberOfColumn(), imageDecode.getNumberOfRow());
         int threadsNum = new Double(Math.ceil(Runtime.getRuntime().availableProcessors())).intValue();
         int sizeOfListOfBlueSegment = listOfBlueSegment.size();
@@ -713,7 +739,15 @@ public class DCTMethodVideo {
             }
         }
         try {
-            ImageIO.write(encImage, "jpg", new File(this.pathToResultContainer + (numberOfImg+numberOfImgInSequence) + ".jpg"));
+//            ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
+//            ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
+//            jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+//            jpgWriteParam.setCompressionQuality(1f);
+//            FileImageOutputStream imageOutputStream = new FileImageOutputStream(new File(this.pathToResultContainer + getImageName(numberOfImg+numberOfImgInSequence)));
+//            jpgWriter.setOutput(imageOutputStream);
+//            jpgWriter.write(null,new IIOImage(encImage, null, null), jpgWriteParam);
+//            imageOutputStream.close();
+            ImageIO.write(encImage, "png", new File(this.pathToResultContainer + getImageName(numberOfImg+numberOfImgInSequence)));
             //ImageIO.write(encImage, "png", new File("images\\test.png"));
         } catch (IOException e) {
             System.out.println("error " + e.getMessage());
@@ -805,6 +839,26 @@ public class DCTMethodVideo {
                 in = ImageIO.read(img);
             }
             return in;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    private static String getImageName(int index) {
+
+        try {
+            String fileIndex = String.valueOf(index);
+            //System.out.println("fileName :" + fileName);
+            File img = imageMap.get(fileIndex);
+
+            if (img != null) {
+                //System.out.println("img :"+img.getName());
+                return img.getName();
+            } else {
+                return Integer.toString(index);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;

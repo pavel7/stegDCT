@@ -98,7 +98,7 @@ public class Hologram {
             }
         }
         normFunction(newHologramm, intesivity, numberOfColumnHolog, numberOfRowHolog);
-        ByteImageBMP.saveImageFromMassive(outputHologram, newHologramm, numberOfColumnHolog, numberOfRowHolog);
+        ByteImageBMP.saveImageFromMassive(outputHologram, newHologramm, numberOfColumnHolog, numberOfRowHolog, "BMP");
         return 1;
     }
 
@@ -137,13 +137,13 @@ public class Hologram {
             }
         }
         normFunctionBack(newHologramm, numberOfColumnHolog, numberOfRowHolog);
-        ByteImageBMP.saveImageFromMassive(outputHologram, newHologramm, numberOfColumnHolog, numberOfRowHolog);
+        ByteImageBMP.saveImageFromMassive(outputHologram, newHologramm, numberOfColumnHolog, numberOfRowHolog, "BMP");
         return 1;
     }
 
     public static void main(String[] args) {
         //useHologram("images"+ File.separator +"test.bmp", "images"+ File.separator +"hologram.bmp", 128.0, 3, 128, 128);
-        useHologramBack("images" + File.separator + "hologram.bmp", "images" + File.separator + "extractedImage.bmp", 64, 64);
+        useHologramBack("images" + File.separator + "new4resultedIMG.bmp", "images" + File.separator + "ne4wresultedIMG.bmp", 64, 64);
 
     }
 }

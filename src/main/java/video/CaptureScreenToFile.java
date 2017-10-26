@@ -100,7 +100,8 @@ public class CaptureScreenToFile {
         encoder.setWidth(screenbounds.width);
         encoder.setHeight(screenbounds.height);
         // We are going to use 420P as the format because that's what most video formats these days use
-        final PixelFormat.Type pixelformat = PixelFormat.Type.PIX_FMT_YUV420P;
+//        final PixelFormat.Type pixelformat = PixelFormat.Type.PIX_FMT_YUV420P;
+        final PixelFormat.Type pixelformat = PixelFormat.Type.PIX_FMT_BGR24;
         encoder.setPixelFormat(pixelformat);
         encoder.setTimeBase(framerate);
 
@@ -199,8 +200,9 @@ public class CaptureScreenToFile {
     public static void main(String[] args) throws AWTException, InterruptedException, IOException {
 
         int framesPerSecond = 30;
-        String filename = "video" + File.separator + "output.mp4";
-        String inputFolder = "video" + File.separator + "test_decoded" + File.separator;
+        String filename = "video" + File.separator + "output1.mp4";
+        String inputFolder = "video" + File.separator + "test_decoded1" + File.separator;
+//        String inputFolder = "images" + File.separator + "EncodedPictures" + File.separator;
         String formatname = "mp4";
         String codecname = "libx264";
 

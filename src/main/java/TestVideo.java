@@ -12,10 +12,8 @@ public class TestVideo {
     public static void main(String a[]) throws Exception {
         String filenameInput = "video" + File.separator + "IMG_0065.mp4";
         String temproryImages = "video" + File.separator + "test_decoded" + File.separator;
-        String filenameOutput = "images" + File.separator + "EncodedPictures" + File.separator + "EncodedImage";
+        String filenameOutput = "images" + File.separator + "EncodedPictures" + File.separator;
         DCTMethodVideo test = new DCTMethodVideo(filenameInput, filenameOutput, 170);
-        DecodeVideo decodeElement = new DecodeVideo();
-        //decodeElement.decodeVideo(filenameInput, temproryImages);
         test.setNumberOfPicturesAll(8);
         String copyrightSymbol = "images" + File.separator + "test.bmp";
         String hologramOfCopyrightSymbol = "images" + File.separator + "hologram.bmp";
@@ -25,7 +23,7 @@ public class TestVideo {
         ByteImageBMP newCopyright = new ByteImageBMP(hologramOfCopyrightSymbol);
         //ByteImageBMP newCopyright = new ByteImageBMP(copyrightSymbol);
 
-        int numberOfSegments = newCopyright.divideImageOnPart(32, 16, pathToPartsOfCopyrightSymbol);
+        int numberOfSegments = newCopyright.divideImageOnPart(32, 16, pathToPartsOfCopyrightSymbol, "BMP");
         int startSegment = 0;
 
         for (int i = 0; i < numberOfSegments; i++) {
@@ -37,5 +35,6 @@ public class TestVideo {
 //        byte[] testByte = newC.getByteCodeOfImage();
             test.insertByteCode(testByte, startSegment, temproryImages);
         }
+
     }
 }

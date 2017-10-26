@@ -35,13 +35,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageOutputStream;
 
 /**
  * Opens a media file, finds the first video stream, and then plays it.
@@ -235,11 +233,18 @@ public class DecodeVideo {
 
     private static void processFrame(BufferedImage image, int i, String outputDirectiory, long streamTimestamp) {
         try {
-            File file = new File(outputDirectiory
-                    + i + "-" + streamTimestamp + "-" + "frame" + ".jpg");
-            ImageIO.write(image, "jpg", file);
+            File file = new File(outputDirectiory + i + "-" + streamTimestamp + "-" + "frame" + ".png");
+//            ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
+//            ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
+//            jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+//            jpgWriteParam.setCompressionQuality(1f);
+//            FileImageOutputStream imageOutputStream = new FileImageOutputStream(new File(outputDirectiory + i + "-" + streamTimestamp + "-" + "frame" + ".jpg"));
+//            jpgWriter.setOutput(imageOutputStream);
+//            jpgWriter.write(null,new IIOImage(image, null, null), jpgWriteParam);
+//            imageOutputStream.close();
+            ImageIO.write(image, "png", file);
             System.out.println("Wrote: " + outputDirectiory
-                    + i + "-" + streamTimestamp + "-" + "frame" + ".jpg");
+                    + i + "-" + streamTimestamp + "-" + "frame" + ".png");
         } catch (Exception var5) {
             var5.printStackTrace();
         }
@@ -254,9 +259,9 @@ public class DecodeVideo {
      * @throws InterruptedException
      */
     public static void main(String[] args) throws InterruptedException, IOException {
-        //String filename = "video" + File.separator + "output.mp4";
-        String filename = "video" + File.separator + "IMG_0065.mp4";
-        String outputDirectory = "video" + File.separator + "test_decoded" + File.separator;
+        String filename = "video" + File.separator + "output1.mp4";
+//        String filename = "video" + File.separator + "IMG_0065.mp4";
+        String outputDirectory = "video" + File.separator + "test_decoded2" + File.separator;
         decodeVideo(filename, outputDirectory);
     }
 
