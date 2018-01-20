@@ -100,7 +100,8 @@ public class CaptureScreenToFile {
         encoder.setWidth(screenbounds.width);
         encoder.setHeight(screenbounds.height);
         // We are going to use 420P as the format because that's what most video formats these days use
-        final PixelFormat.Type pixelformat = PixelFormat.Type.PIX_FMT_YUV420P;
+//        final PixelFormat.Type pixelformat = PixelFormat.Type.PIX_FMT_YUV420P;
+        final PixelFormat.Type pixelformat = PixelFormat.Type.PIX_FMT_YUVJ420P;
         encoder.setPixelFormat(pixelformat);
         encoder.setTimeBase(framerate);
 
@@ -200,7 +201,8 @@ public class CaptureScreenToFile {
 
         int framesPerSecond = 30;
         String filename = "video" + File.separator + "output.mp4";
-        String inputFolder = "video" + File.separator + "test_decoded" + File.separator;
+        String inputFolder = "video" + File.separator + "test_decoded1" + File.separator;
+//        String inputFolder = "images" + File.separator + "EncodedPictures" + File.separator;
         String formatname = "mp4";
         String codecname = "libx264";
 
@@ -226,9 +228,10 @@ public class CaptureScreenToFile {
 
         // if the source image is already the target type, return the source image
 
-        if (sourceImage.getType() == targetType)
+        if (sourceImage.getType() == targetType) {
             image = sourceImage;
-
+            System.out.println("++");
+        }
             // otherwise create a new image of the target type and draw the new
             // image
 
@@ -236,6 +239,7 @@ public class CaptureScreenToFile {
             image = new BufferedImage(sourceImage.getWidth(),
                     sourceImage.getHeight(), targetType);
             image.getGraphics().drawImage(sourceImage, 0, 0, null);
+            System.out.println("--");
         }
 
         return image;

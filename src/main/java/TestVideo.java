@@ -5,6 +5,7 @@ import img.ByteImageBMP;
 import img.Hologram;
 import mathOperations.BitOperations;
 import steganographicMethods.DCTMethodVideo;
+import steganographicMethods.DCTMethodVideoFloat;
 import video.DecodeVideo;
 
 public class TestVideo {
@@ -12,10 +13,8 @@ public class TestVideo {
     public static void main(String a[]) throws Exception {
         String filenameInput = "video" + File.separator + "IMG_0065.mp4";
         String temproryImages = "video" + File.separator + "test_decoded" + File.separator;
-        String filenameOutput = "images" + File.separator + "EncodedPictures" + File.separator + "EncodedImage";
-        DCTMethodVideo test = new DCTMethodVideo(filenameInput, filenameOutput, 170);
-        DecodeVideo decodeElement = new DecodeVideo();
-        //decodeElement.decodeVideo(filenameInput, temproryImages);
+        String filenameOutput = "images" + File.separator + "EncodedPictures" + File.separator;
+        DCTMethodVideoFloat test = new DCTMethodVideoFloat(filenameOutput, 25);
         test.setNumberOfPicturesAll(8);
         String copyrightSymbol = "images" + File.separator + "test.bmp";
         String hologramOfCopyrightSymbol = "images" + File.separator + "hologram.bmp";
@@ -25,7 +24,7 @@ public class TestVideo {
         ByteImageBMP newCopyright = new ByteImageBMP(hologramOfCopyrightSymbol);
         //ByteImageBMP newCopyright = new ByteImageBMP(copyrightSymbol);
 
-        int numberOfSegments = newCopyright.divideImageOnPart(32, 16, pathToPartsOfCopyrightSymbol);
+        int numberOfSegments = newCopyright.divideImageOnPart(32, 16, pathToPartsOfCopyrightSymbol, "BMP");
         int startSegment = 0;
 
         for (int i = 0; i < numberOfSegments; i++) {
@@ -37,5 +36,6 @@ public class TestVideo {
 //        byte[] testByte = newC.getByteCodeOfImage();
             test.insertByteCode(testByte, startSegment, temproryImages);
         }
+
     }
 }

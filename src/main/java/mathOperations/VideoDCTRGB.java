@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 
-public class VideoDCT implements Callable {
+public class VideoDCTRGB implements Callable {
     private int sizeOfSegments = 8;
     private int firstElem = 0;
     private int lastElem = 0;
@@ -16,7 +16,7 @@ public class VideoDCT implements Callable {
         return result;
     }
 
-    public VideoDCT(ArrayList<short[][][]> inputList, int startElem, int endElem) {
+    public VideoDCTRGB(ArrayList<short[][][]> inputList, int startElem, int endElem) {
         input = new ArrayList<>();
         for (int i = startElem; i < endElem; i++) {
             input.add(inputList.get(i).clone());
@@ -24,7 +24,7 @@ public class VideoDCT implements Callable {
         result = new ArrayList<>();
     }
 
-    public VideoDCT(ArrayList<short[][][]> inputList, int startElem, int endElem, int newSizeOfSigments) {
+    public VideoDCTRGB(ArrayList<short[][][]> inputList, int startElem, int endElem, int newSizeOfSigments) {
         input = new ArrayList<>();
         for (int i = startElem; i < endElem; i++) {
             input.add(inputList.get(i).clone());

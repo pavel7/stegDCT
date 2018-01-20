@@ -1,8 +1,8 @@
 package steganographicMethods;
 
-import img.ImageBMP;
+import img.*;
 import mathOperations.BitOperations;
-import mathOperations.VideoDCTRGB;
+import mathOperations.VideoDCTYUV;
 import mathOperations.VideoInvertDCT;
 import string.StringUtils;
 
@@ -20,10 +20,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-/**
- * Created by ����� on 04.11.2015.
- */
-public class DCTMethodVideo {
+
+public class DCTMethodVideoFloat {
     private String pathToResultContainer;
     private int sizeOfSegments = 8;
     private double p = 0.25;
@@ -37,12 +35,12 @@ public class DCTMethodVideo {
     private int numberOfPicturesAll = 0;
     private static Map<String, File> imageMap = new HashMap<String, File>();
 
-    public DCTMethodVideo(String inputImage, String outputImage, int comparisonCoefficient) {
+    public DCTMethodVideoFloat(String outputImage, int comparisonCoefficient) {
         pathToResultContainer = outputImage;
         p = comparisonCoefficient;
     }
 
-    public DCTMethodVideo(String inputImage, String outputImage, int comparisonCoefficient, int newSizeOfSegments) {
+    public DCTMethodVideoFloat(String outputImage, int comparisonCoefficient, int newSizeOfSegments) {
         pathToResultContainer = outputImage;
         p = comparisonCoefficient;
         sizeOfSegments = newSizeOfSegments;
@@ -108,200 +106,6 @@ public class DCTMethodVideo {
         return p;
     }
 
-//    public ArrayList<ArrayList<short[][]>> videoToListOfBlueSegments() throws IOException {
-//        String filename = pathToEmptyContainer;
-//        ArrayList<ArrayList<short[][]>> listOfSegments = new ArrayList<>();
-//        File outdir = new File("video\\pictures");
-//        IContainer container = IContainer.make();
-//
-//        if (container.open(filename, IContainer.Type.READ, null) < 0)
-//            throw new IllegalArgumentException("could not open file: "
-//                    + filename);
-//        int numStreams = container.getNumStreams();
-//        int videoStreamId = -1;
-//        IStreamCoder videoCoder = null;
-//
-//        for (int i = 0; i < numStreams; i++) {
-//            IStream stream = container.getStream(i);
-//            IStreamCoder coder = stream.getStreamCoder();
-//            if (coder.getCodecType() == ICodec.Type.CODEC_TYPE_VIDEO) {
-//                videoStreamId = i;
-//                videoCoder = coder;
-//                break;
-//            }
-//        }
-//
-//        if (videoStreamId == -1)
-//            throw new RuntimeException("could not find video stream in container: "
-//                    + filename);
-//
-//        if (videoCoder.open() < 0)
-//            throw new RuntimeException(
-//                    "could not open video decoder for container: " + filename);
-//
-//        IPacket packet = IPacket.make();
-//
-//        long start = 0;//6 * 1000 * 1000;
-//        long end = container.getDuration();
-//        ;
-//
-//        long step = (1 * 1000 * 1000) / videoCoder.getFrameRate().getNumerator();
-//
-////        END:
-//        int numberOfFrames = 0;
-//        while (container.readNextPacket(packet) >= 0) {
-//            if (packet.getStreamIndex() == videoStreamId) {
-//                IVideoPicture picture = IVideoPicture.make(
-//                        videoCoder.getPixelType(), videoCoder.getWidth(),
-//                        videoCoder.getHeight());
-//                int offset = 0;
-//                while (offset < packet.getSize()) {
-//                    int bytesDecoded = videoCoder.decodeVideo(picture, packet,
-//                            offset);
-//
-//                    if (bytesDecoded < 0)
-//                        throw new RuntimeException("got error decoding video in: "
-//                                + filename);
-//                    offset += bytesDecoded;
-//
-//                    if (picture.isComplete()) {
-//                        IVideoPicture newPic = picture;
-//                        // � �������������
-//                        long timestamp = picture.getTimeStamp();
-//                        if (timestamp > start) {
-//                            // �������� ����������� BufferedImage
-//                            BufferedImage javaImage = Utils
-//                                    .videoPictureToImage(newPic);
-//                            String fileName = numberOfFrames + ".png";
-//                            ImageIO.write(javaImage, "PNG", new File(outdir,
-//                                    fileName));
-//                            numberOfFrames++;
-//                            ImageBMP imageInput = new ImageBMP(outdir + File.separator + fileName);
-//                            listOfSegments.add(imageToListOfBlueSegments(imageInput));
-//                            start += step;
-//                        }
-////                        if (timestamp > end) {
-////                            break END;
-////                        }
-//                    }
-//                }
-//            }
-//        }
-//        if (videoCoder != null) {
-//            videoCoder.close();
-//            videoCoder = null;
-//        }
-//        if (container != null) {
-//            container.close();
-//            container = null;
-//        }
-//        numberOfPictures = numberOfFrames;
-//        while (numberOfPictures % sizeOfSegments != 0) {
-//            listOfSegments.remove(numberOfPictures - 1);
-//            numberOfFrames = numberOfFrames - 1;
-//        }
-//        return listOfSegments;
-//    }
-
-/*    public void videoToListOfImages() throws IOException {
-        String filename = pathToEmptyContainer;
-        //ArrayList<short[][]> listOfSegments = new ArrayList<>();
-        File outdir = new File("video" + File.separator + "pictures");
-        IContainer container = IContainer.make();
-
-        if (container.open(filename, IContainer.Type.READ, null) < 0)
-            throw new IllegalArgumentException("could not open file: "
-                    + filename);
-        int numStreams = container.getNumStreams();
-        int videoStreamId = -1;
-        IStreamCoder videoCoder = null;
-
-        for (int i = 0; i < numStreams; i++) {
-            IStream stream = container.getStream(i);
-            IStreamCoder coder = stream.getStreamCoder();
-            if (coder.getCodecType() == ICodec.Type.CODEC_TYPE_VIDEO) {
-                videoStreamId = i;
-                videoCoder = coder;
-                break;
-            }
-        }
-
-        if (videoStreamId == -1)
-            throw new RuntimeException("could not find video stream in container: "
-                    + filename);
-
-        if (videoCoder.open() < 0)
-            throw new RuntimeException(
-                    "could not open video decoder for container: " + filename);
-
-        IPacket packet = IPacket.make();
-
-        long start = 0;//6 * 1000 * 1000;
-        long end = container.getDuration();
-        ;
-
-        long step = (1 * 1000 * 1000) / videoCoder.getFrameRate().getNumerator();
-
-//        END:
-        int numberOfFrames = 0;
-        while (container.readNextPacket(packet) >= 0) {
-            if (packet.getStreamIndex() == videoStreamId) {
-                IVideoPicture picture = IVideoPicture.make(
-                        videoCoder.getPixelType(), videoCoder.getWidth(),
-                        videoCoder.getHeight());
-                int offset = 0;
-                while (offset < packet.getSize()) {
-                    int bytesDecoded = videoCoder.decodeVideo(picture, packet,
-                            offset);
-
-                    if (bytesDecoded < 0)
-                        throw new RuntimeException("got error decoding video in: "
-                                + filename);
-                    offset += bytesDecoded;
-
-                    if (picture.isComplete()) {
-                        IVideoPicture newPic = picture;
-                        long timestamp = picture.getTimeStamp();
-                        if (timestamp > start) {
-                            BufferedImage javaImage = Utils
-                                    .videoPictureToImage(newPic);
-                            String fileName = numberOfFrames + ".jpg";
-                            ImageIO.write(javaImage, "JPG", new File(outdir,
-                                    fileName));
-                            numberOfFrames++;
-//                            ImageBMP imageInput = new ImageBMP(javaImage);
-//                            numberofRowAll = imageInput.getNumberOfRow();
-//                            numberofColumnAll = imageInput.getNumberOfColumn();
-//                            short[][] pixelBlue = new short[numberofRowAll][numberofColumnAll];
-//                            for (int i = 0; i < numberofRowAll; i++)
-//                                for (int j = 0; j < numberofColumnAll; j++)
-//                                    pixelBlue[i][j] = (short) imageInput.getRGB(i, j).getBlue();
-//                            listOfSegments.add(pixelBlue);
-                            start += step;
-                        }
-//                        if (timestamp > end) {
-//                            break END;
-//                        }
-                    }
-                }
-            }
-        }
-        if (videoCoder != null) {
-            videoCoder.close();
-            videoCoder = null;
-        }
-        if (container != null) {
-            container.close();
-            container = null;
-        }
-        numberOfPicturesAll = numberOfFrames;
-//        while (numberOfFrames % sizeOfSegments != 0) {
-//            listOfSegments.remove(numberOfFrames - 1);
-//            numberOfFrames = numberOfFrames - 1;
-//        }
-        //return listOfSegments;
-    }*/
-
     public void insertText(String message, int firstImageNumber, String inputListOfimages) throws Exception {
         int messageLength = message.length();
         short[] str2vec = new short[messageLength];
@@ -319,15 +123,15 @@ public class DCTMethodVideo {
         if (numberOfSegments < messageLength)
             throw (new Exception("String is too long"));
         //for (int i = 0; i < numberOfImages; i++) {
-        ArrayList<short[][][]> listOfBlueSegment = getListOfBlueSegmentsAccordingSegmentSize(0, numberOfColumn, numberOfRow);
+        ArrayList<float[][][]> listOfYSegment = getListOfYSegmentsAccordingSegmentSize(0, numberOfColumn, numberOfRow);
         int threadsNum = new Double(Math.ceil(Runtime.getRuntime().availableProcessors())).intValue();
-        int sizeOfListOfBlueSegment = listOfBlueSegment.size();
-        VideoDCTRGB[] listOfDCT = new VideoDCTRGB[threadsNum];
+        int sizeOfListOfBlueSegment = listOfYSegment.size();
+        VideoDCTYUV[] listOfDCT = new VideoDCTYUV[threadsNum];
         for (int k = 0; k < threadsNum; k++) {
             if (k != threadsNum - 1)
-                listOfDCT[k] = new VideoDCTRGB(listOfBlueSegment, k * (sizeOfListOfBlueSegment / threadsNum), (k + 1) * (sizeOfListOfBlueSegment / threadsNum));
+                listOfDCT[k] = new VideoDCTYUV(listOfYSegment, k * (sizeOfListOfBlueSegment / threadsNum), (k + 1) * (sizeOfListOfBlueSegment / threadsNum));
             else {
-                listOfDCT[k] = new VideoDCTRGB(listOfBlueSegment, k * (sizeOfListOfBlueSegment / threadsNum), sizeOfListOfBlueSegment);
+                listOfDCT[k] = new VideoDCTYUV(listOfYSegment, k * (sizeOfListOfBlueSegment / threadsNum), sizeOfListOfBlueSegment);
             }
         }
 
@@ -404,7 +208,7 @@ public class DCTMethodVideo {
             System.out.println("Empty folder");
             return;
         }
-        ImageBMP firstImage = new ImageBMP(getImage(0));
+        ImageBMPYUV firstImage = new ImageBMPYUV(getImage(0));
         int numberOfRow = firstImage.getNumberOfRow();
         int numberOfColumn = firstImage.getNumberOfColumn();
         int numberOfImages = numberOfPicturesAll;
@@ -418,15 +222,15 @@ public class DCTMethodVideo {
         if (numberOfSegments < messageLength/8)
             throw (new Exception("String is too long"));
         //for (int i = 0; i < numberOfImages; i++) {
-        ArrayList<short[][][]> listOfBlueSegment = getListOfBlueSegmentsAccordingSegmentSize(firstImageNumber, numberOfColumn, numberOfRow);
+        ArrayList<float[][][]> listOfYSegment = getListOfYSegmentsAccordingSegmentSize(firstImageNumber, numberOfColumn, numberOfRow);
         int threadsNum = new Double(Math.ceil(Runtime.getRuntime().availableProcessors())).intValue();
-        int sizeOfListOfBlueSegment = listOfBlueSegment.size();
-        VideoDCTRGB[] listOfDCT = new VideoDCTRGB[threadsNum];
+        int sizeOfListOfBlueSegment = listOfYSegment.size();
+        VideoDCTYUV[] listOfDCT = new VideoDCTYUV[threadsNum];
         for (int k = 0; k < threadsNum; k++) {
             if (k != threadsNum - 1)
-                listOfDCT[k] = new VideoDCTRGB(listOfBlueSegment, k * (sizeOfListOfBlueSegment / threadsNum), (k + 1) * (sizeOfListOfBlueSegment / threadsNum));
+                listOfDCT[k] = new VideoDCTYUV(listOfYSegment, k * (sizeOfListOfBlueSegment / threadsNum), (k + 1) * (sizeOfListOfBlueSegment / threadsNum));
             else {
-                listOfDCT[k] = new VideoDCTRGB(listOfBlueSegment, k * (sizeOfListOfBlueSegment / threadsNum), sizeOfListOfBlueSegment);
+                listOfDCT[k] = new VideoDCTYUV(listOfYSegment, k * (sizeOfListOfBlueSegment / threadsNum), sizeOfListOfBlueSegment);
             }
         }
 
@@ -480,15 +284,15 @@ public class DCTMethodVideo {
 
     public String decodeMessageFromImage(int numberOfImages, String inputImage, String newFormat) throws ExecutionException, InterruptedException {
         ImageBMP imageDecode = new ImageBMP(inputImage + numberOfImages + newFormat);
-        ArrayList<short[][][]> listOfBlueSegment = getListOfBlueSegmentsAccordingSegmentSize(numberOfImages, imageDecode.getNumberOfColumn(), imageDecode.getNumberOfRow());
+        ArrayList<float[][][]> listOfYSegment = getListOfYSegmentsAccordingSegmentSize(numberOfImages, imageDecode.getNumberOfColumn(), imageDecode.getNumberOfRow());
         int threadsNum = new Double(Math.ceil(Runtime.getRuntime().availableProcessors())).intValue();
-        int sizeOfListOfBlueSegment = listOfBlueSegment.size();
-        VideoDCTRGB[] listOfDCT = new VideoDCTRGB[threadsNum];
+        int sizeOfListOfBlueSegment = listOfYSegment.size();
+        VideoDCTYUV[] listOfDCT = new VideoDCTYUV[threadsNum];
         for (int k = 0; k < threadsNum; k++) {
             if (k != threadsNum - 1)
-                listOfDCT[k] = new VideoDCTRGB(listOfBlueSegment, k * (sizeOfListOfBlueSegment / threadsNum), (k + 1) * (sizeOfListOfBlueSegment / threadsNum));
+                listOfDCT[k] = new VideoDCTYUV(listOfYSegment, k * (sizeOfListOfBlueSegment / threadsNum), (k + 1) * (sizeOfListOfBlueSegment / threadsNum));
             else {
-                listOfDCT[k] = new VideoDCTRGB(listOfBlueSegment, k * (sizeOfListOfBlueSegment / threadsNum), sizeOfListOfBlueSegment);
+                listOfDCT[k] = new VideoDCTYUV(listOfYSegment, k * (sizeOfListOfBlueSegment / threadsNum), sizeOfListOfBlueSegment);
             }
         }
         System.out.println("start");
@@ -533,16 +337,16 @@ public class DCTMethodVideo {
             System.out.println("Empty folder");
             return null;
         }
-        ImageBMP imageDecode = new ImageBMP(getImage( numberOfImages));
-        ArrayList<short[][][]> listOfBlueSegment = getListOfBlueSegmentsAccordingSegmentSize(numberOfImages, imageDecode.getNumberOfColumn(), imageDecode.getNumberOfRow());
+        ImageBMPYUV imageDecode = new ImageBMPYUV(getImage( numberOfImages));
+        ArrayList<float[][][]> listOfYSegment = getListOfYSegmentsAccordingSegmentSize(numberOfImages, imageDecode.getNumberOfColumn(), imageDecode.getNumberOfRow());
         int threadsNum = new Double(Math.ceil(Runtime.getRuntime().availableProcessors())).intValue();
-        int sizeOfListOfBlueSegment = listOfBlueSegment.size();
-        VideoDCTRGB[] listOfDCT = new VideoDCTRGB[threadsNum];
+        int sizeOfListOfBlueSegment = listOfYSegment.size();
+        VideoDCTYUV[] listOfDCT = new VideoDCTYUV[threadsNum];
         for (int k = 0; k < threadsNum; k++) {
             if (k != threadsNum - 1)
-                listOfDCT[k] = new VideoDCTRGB(listOfBlueSegment, k * (sizeOfListOfBlueSegment / threadsNum), (k + 1) * (sizeOfListOfBlueSegment / threadsNum));
+                listOfDCT[k] = new VideoDCTYUV(listOfYSegment, k * (sizeOfListOfBlueSegment / threadsNum), (k + 1) * (sizeOfListOfBlueSegment / threadsNum));
             else {
-                listOfDCT[k] = new VideoDCTRGB(listOfBlueSegment, k * (sizeOfListOfBlueSegment / threadsNum), sizeOfListOfBlueSegment);
+                listOfDCT[k] = new VideoDCTYUV(listOfYSegment, k * (sizeOfListOfBlueSegment / threadsNum), sizeOfListOfBlueSegment);
             }
         }
         System.out.println("start");
@@ -563,14 +367,14 @@ public class DCTMethodVideo {
         return this.decodeByteCode(listOfDecodeSpectrCoefOfDCT);
     }
 
-    public ArrayList<short[][][]> getListOfBlueSegmentsAccordingSegmentSize(int numberOfImage, int columnSize, int rowSize) {
-        ArrayList<short[][][]> sizeOfSegmentsPisctures = new ArrayList<>(rowSize * columnSize * sizeOfSegments);
-        short[][][] matrixOfBluePixels = new short[sizeOfSegments][columnSize][rowSize];
+    public ArrayList<float[][][]> getListOfYSegmentsAccordingSegmentSize(int numberOfImage, int columnSize, int rowSize) {
+        ArrayList<float[][][]> sizeOfSegmentsPisctures = new ArrayList<>(rowSize * columnSize * sizeOfSegments);
+        float[][][] matrixOfBluePixels = new float[sizeOfSegments][columnSize][rowSize];
         for (int i = numberOfImage, j = 0; i < numberOfImage + sizeOfSegments; i++, j++) {
-            ImageBMP firstImage = new ImageBMP(getImage(i));
+            ImageBMPYUV firstImage = new ImageBMPYUV(getImage(i));
             for (int x = 0; x < columnSize; x++)
                 for (int y = 0; y < rowSize; y++) {
-                    matrixOfBluePixels[j][x][y] = (short) firstImage.getRGB(x, y).getBlue();
+                    matrixOfBluePixels[j][x][y] = (short) firstImage.getY(x, y);
                 }
         }
         int numberOfSegments = (sizeOfSegments * rowSize * columnSize) / (sizeOfSegments * sizeOfSegments * sizeOfSegments);
@@ -581,7 +385,7 @@ public class DCTMethodVideo {
         for (int i = 0; i < numberOfSegments; i++) {
             int indexOfStartColumn = (sizeOfSegments * i) % columnSize;
             int indexOfEndColumn = indexOfStartColumn + sizeOfSegments - 1;
-            short[][][] tempMassive = submatrix(matrixOfBluePixels, indexOfStartPicture, indexOfEndPicture, indexOfStartColumn, indexOfEndColumn, indexOfStartRow, indexOfEndRow);
+            float[][][] tempMassive = submatrix(matrixOfBluePixels, indexOfStartPicture, indexOfEndPicture, indexOfStartColumn, indexOfEndColumn, indexOfStartRow, indexOfEndRow);
             if (indexOfEndColumn == columnSize - 1) {
                 indexOfStartRow = indexOfStartRow + sizeOfSegments;
                 indexOfEndRow = indexOfEndRow + sizeOfSegments;
@@ -703,25 +507,10 @@ public class DCTMethodVideo {
             }
             indexX++;
         }
-//        numberOfRow = emptyContainer.getNumberOfRow();
-//        numberOfColumn = emptyContainer.getNumberOfColumn();
-//        if (numberOfRow % sizeOfSegments != 0) {
-//            for (int i = numberOfRow - numberOfRow % sizeOfSegments; i < numberOfRow; i++)
-//                for (int j = 0; j < numberOfColumn; j++)
-//                    resultMassive[i][j] = emptyContainer.getRGB(i, j).getBlue();
-//        }
-//        if (numberOfColumn % sizeOfSegments != 0) {
-//            for (int i = 0; i < numberOfRow; i++)
-//                for (int j = numberOfColumn - numberOfColumn % sizeOfSegments; j < numberOfColumn; j++)
-//                    resultMassive[i][j] = emptyContainer.getRGB(i, j).getBlue();
-//        }
-//        if (doNormalizing) {
-//            normFunction(resultMassive, numberOfRow, numberOfColumn);
-//        }
         return resultMassive;
     }
 
-    private void encodeImage(int numberOfColumn, int numberOfRow, double[][][] bluePixels, int numberOfImg, int numberOfImgInSequence) {
+    private void encodeImage(int numberOfColumn, int numberOfRow, double[][][] yPixel, int numberOfImg, int numberOfImgInSequence) {
 //        if (numberOfRow % sizeOfSegments != 0)
 //            numberOfRow = numberOfRow - numberOfRow % sizeOfSegments;
 //        if (numberOfColumn % sizeOfSegments != 0)
@@ -730,7 +519,12 @@ public class DCTMethodVideo {
         BufferedImage encImage = new BufferedImage(numberOfColumn, numberOfRow, BufferedImage.TYPE_3BYTE_BGR);
         for (int x = 0; x < numberOfColumn; x++) {
             for (int y = 0; y < numberOfRow; y++) {
-                Color pixel = new Color(emptyContainer.getRGB(x, y).getRed(), emptyContainer.getRGB(x, y).getGreen(), (int) Math.round(bluePixels[numberOfImgInSequence][x][y]), emptyContainer.getRGB(x, y).getAlpha());
+                RGB tempRGB = new RGB((short)emptyContainer.getRGB(x,y).getRed(), (short)emptyContainer.getRGB(x,y).getGreen(), (short)emptyContainer.getRGB(x,y).getBlue());
+                YUV tempYUV = new YUV();
+                YuvConverter.rgb2YUV(tempRGB,tempYUV);
+                tempYUV.setY((float)yPixel[numberOfImgInSequence][x][y]);
+                YuvConverter.yuv2RGB(tempYUV, tempRGB);
+                Color pixel = new Color(tempRGB.getR(), tempRGB.getG(), tempRGB.getB(), emptyContainer.getRGB(x, y).getAlpha());
                 encImage.setRGB(x, y, pixel.getRGB());
             }
         }
@@ -752,8 +546,8 @@ public class DCTMethodVideo {
     }
 
 
-    private short[][][] submatrix(short[][][] pixelMatrix, int indexOfStartPicture, int indexOfEndPicture, int indexOfStartColumn, int indexOfEndColumn, int indexOfStartRow, int indexOfEndRow) {
-        short[][][] tempMassive = new short[indexOfEndPicture - indexOfStartPicture + 1][indexOfEndColumn - indexOfStartColumn + 1][indexOfEndRow - indexOfStartRow + 1];
+    private float[][][] submatrix(float[][][] pixelMatrix, int indexOfStartPicture, int indexOfEndPicture, int indexOfStartColumn, int indexOfEndColumn, int indexOfStartRow, int indexOfEndRow) {
+        float[][][] tempMassive = new float[indexOfEndPicture - indexOfStartPicture + 1][indexOfEndColumn - indexOfStartColumn + 1][indexOfEndRow - indexOfStartRow + 1];
         for (int t = indexOfStartPicture, n = 0; t <= indexOfEndPicture; t++, n++)
             for (int i = indexOfStartColumn, k = 0; i <= indexOfEndColumn; i++, k++)
                 for (int j = indexOfStartRow, l = 0; j <= indexOfEndRow; j++, l++)

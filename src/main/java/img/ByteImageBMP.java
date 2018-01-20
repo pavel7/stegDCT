@@ -1,7 +1,10 @@
 package img;
 
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -64,7 +67,7 @@ public class ByteImageBMP {
         return result;
     }
 
-    public void saveImageFromByteCode(String path, short[] image) {
+    public void saveImageFromByteCode(String path, short[] image, String formatName) {
         int numberOfRow = this.getNumberOfRow();
         int numberOfColumn = this.getNumberOfColumn();
         BufferedImage encImage = new BufferedImage(numberOfColumn, numberOfRow, BufferedImage.TYPE_3BYTE_BGR);
@@ -77,14 +80,14 @@ public class ByteImageBMP {
             }
         }
         try {
-            ImageIO.write(encImage, "bmp", new File(path + ".bmp"));
+            ImageIO.write(encImage, formatName, new File(path + ".bmp"));
         } catch (IOException e) {
             System.out.println("error " + e.getMessage());
         }
 
     }
 
-    public static void saveImageFromMassive(String path, double[][] image, int numberOfColumn, int numberOfRow) {
+    public static void saveImageFromMassive(String path, double[][] image, int numberOfColumn, int numberOfRow, String formatName) {
         BufferedImage encImage = new BufferedImage(numberOfColumn, numberOfRow, BufferedImage.TYPE_3BYTE_BGR);
         for (int x = 0; x < numberOfColumn; x++) {
             for (int y = 0; y < numberOfRow; y++) {
@@ -98,14 +101,14 @@ public class ByteImageBMP {
             }
         }
         try {
-            ImageIO.write(encImage, "bmp", new File(path));
+            ImageIO.write(encImage, formatName, new File(path));
         } catch (IOException e) {
             System.out.println("error " + e.getMessage());
         }
 
     }
 
-    public int divideImageOnPart(int width, int height, String outputPath) {
+    public int divideImageOnPart(int width, int height, String outputPath, String formatName) {
         int numberOfXSegments = this.getNumberOfColumn() / width;
         int numberOfYSegments = this.getNumberOfRow() / height;
         int numberOfSegments = numberOfXSegments * numberOfYSegments;
@@ -119,7 +122,7 @@ public class ByteImageBMP {
                         encImage.setRGB(x, y, pixel.getRGB());
                     }
                 try {
-                    ImageIO.write(encImage, "bmp", new File(outputPath + segmentNumber + ".bmp"));
+                    ImageIO.write(encImage, formatName, new File(outputPath + segmentNumber + ".bmp"));
                 } catch (IOException e) {
                     System.out.println("error " + e.getMessage());
                 }
@@ -129,7 +132,7 @@ public class ByteImageBMP {
         return numberOfSegments;
     }
 
-    public void combineImageFromParts (int width, int height, String inputPath, String outputPath) {
+    public void combineImageFromParts (int width, int height, String inputPath, String outputPath, String formatName) {
         int numberOfXSegments = this.getNumberOfColumn() / width;
         int numberOfYSegments = this.getNumberOfRow() / height;
         int numberOfSegments = numberOfXSegments * numberOfYSegments;
@@ -147,7 +150,7 @@ public class ByteImageBMP {
             }
         }
         try {
-            ImageIO.write(encImage, "bmp", new File(outputPath + "resultedIMG" + ".bmp"));
+              ImageIO.write(encImage, formatName, new File(outputPath + "resultedIMG" + ".bmp"));
         } catch (IOException e) {
             System.out.println("error " + e.getMessage());
         }
@@ -155,8 +158,8 @@ public class ByteImageBMP {
 
     public static void main(String[] args) {
         ByteImageBMP newC = new ByteImageBMP("images" + File.separator + "hologram.bmp");
-        System.out.println(newC.divideImageOnPart(32, 16, "images"+ File.separator +"dividedIM"+ File.separator));
-        //newC.combineImageFromParts(32,16,"images" + File.separator + "test" + File.separator + "90-","images" + File.separator + "090");
+        //System.out.println(newC.divideImageOnPart(32, 16, "images"+ File.separator +"dividedIM"+ File.separator, "BMP"));
+        newC.combineImageFromParts(32,16,"images" + File.separator + "test" + File.separator,"images" + File.separator+"new4", "BMP");
 //        for (int i = 0; i < newC.getNumberOfRow(); i++) {
 //            for (int j = 0; j < newC.getNumberOfColumn(); j++) {
 //                System.out.print(newC.getColor(i, j) + " ");
